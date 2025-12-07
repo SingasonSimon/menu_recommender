@@ -32,6 +32,13 @@ class MyApp extends StatelessWidget {
         title: 'Menu Recommender',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.darkTheme,
+        themeMode: ThemeMode.dark,
+        builder: (context, child) {
+          return MediaQuery(
+            data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(1.0)),
+            child: child!,
+          );
+        },
         home: StreamBuilder<User?>(
           stream: AuthService().authStateChanges,
           builder: (context, snapshot) {

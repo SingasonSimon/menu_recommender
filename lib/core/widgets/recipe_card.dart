@@ -47,6 +47,9 @@ class RecipeCard extends StatelessWidget {
                     placeholder: (context, url) => Container(
                       color: Colors.grey[800],
                       height: 180,
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
                     ),
                     errorWidget: (context, url, error) => Container(
                       color: Colors.grey[800],

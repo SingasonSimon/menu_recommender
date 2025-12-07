@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../core/theme/app_theme.dart';
 import '../../services/auth_service.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -37,11 +38,13 @@ class _LoginScreenState extends State<LoginScreen> {
         await _auth.signUpWithEmail(_email, _password);
       }
       // Auth stream in main.dart will handle navigation
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        _errorMessage = _getAuthErrorMessage(e.code);
+      });
     } catch (e) {
       setState(() {
-        _errorMessage = e.toString().contains('firebase_auth') 
-            ? e.toString().split(']').last.trim() // Simple cleanup
-            : 'Authentication failed. Please try again.';
+        _errorMessage = 'Authentication failed. Please try again.';
       });
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -189,5 +192,28 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  String _getAuthErrorMessage(String code) {
+    switch (code) {
+      case 'user-not-found':
+        return 'No user found with this email.';
+      case 'wrong-password':
+        return 'Wrong password provided.';
+      case 'email-already-in-use':
+        return 'An account already exists with this email.';
+      case 'weak-password':
+        return 'Password is too weak.';
+      case 'invalid-email':
+        return 'Invalid email address.';
+      case 'user-disabled':
+        return 'This account has been disabled.';
+      case 'too-many-requests':
+        return 'Too many requests. Please try again later.';
+      case 'operation-not-allowed':
+        return 'This operation is not allowed.';
+      default:
+        return 'Authentication failed. Please try again.';
+    }
   }
 }
